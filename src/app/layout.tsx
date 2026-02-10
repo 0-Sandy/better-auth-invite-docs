@@ -17,18 +17,20 @@ export const metadata: Metadata = {
     title: "Better Auth Invite Docs",
     description: "The documentation of Better Auth Invite Plugin.",
     siteName: "Better Auth Invite Docs",
-    images: "/og/default.png"
+    images: "/og/default.png",
   },
   twitter: {
     card: "summary_large_image",
     title: "Better Auth Invite Docs",
     description: "The documentation of Better Auth Invite Plugin.",
-    images: "/og/default.png"
+    images: "/og/default.png",
   },
   metadataBase: new URL(
-    process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : `http://localhost:${process.env.PORT ?? 3000}`,
+    process.env.VERCEL_ENV === "production"
+      ? `https://better-auth-invite.vercel.app/`
+      : process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : `http://localhost:3000`,
   ),
 };
 
