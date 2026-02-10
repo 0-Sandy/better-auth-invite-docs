@@ -1,3 +1,10 @@
+import type { Metadata } from 'next';
+export const metadata: Metadata = {
+  openGraph: {
+    url: "/showcase",
+  }
+};
+
 export default function ShowcasePage() {
   return (
     <div className="flex flex-col justify-center text-center flex-1">

@@ -1,4 +1,11 @@
+import type { Metadata } from 'next';
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  openGraph: {
+    url: "/",
+  }
+};
 
 export default function HomePage() {
   return (

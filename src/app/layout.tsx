@@ -13,7 +13,6 @@ export const metadata: Metadata = {
   },
   description: "The documentation of Better Auth Invite Plugin.",
   openGraph: {
-    url: "/",
     title: "Better Auth Invite Docs",
     description: "The documentation of Better Auth Invite Plugin.",
     siteName: "Better Auth Invite Docs",
