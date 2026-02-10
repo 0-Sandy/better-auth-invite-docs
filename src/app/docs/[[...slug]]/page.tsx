@@ -30,7 +30,7 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
   const MDX = page.data.body;
   const gitConfig = {
     user: "0-Sandy",
-    repo: "better-auth-invite-plugin",
+    repo: "better-auth-invite-docs",
     branch: "main",
   };
   const npmName = "better-auth-invite-plugin";

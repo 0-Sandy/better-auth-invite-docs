@@ -9,7 +9,7 @@ export async function GET(
 ) {
   return new ImageResponse(
     <DefaultImage
-      title="Home"
+      title=""
       description="Documentation for the Better Auth Invite Plugin."
       icon={<Logo />}
       site="Better Auth Invite Docs"
