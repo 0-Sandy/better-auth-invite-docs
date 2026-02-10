@@ -19,7 +19,7 @@ export async function GET(
       title={page.data.title}
       description={page.data.description}
       icon={<Logo />}
-      site="Better Auth Invite Plugin"
+      site="Better Auth Invite Docs"
       primaryColor="#0B1220"
       primaryTextColor="#E6EDF7"
     />,
