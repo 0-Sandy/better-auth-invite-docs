@@ -10,7 +10,7 @@ import {
   ApiMethodTabsTrigger,
 } from "./api-method-tabs";
 import { Endpoint } from "./endpoint";
-import { DynamicCodeBlock } from "./ui/dynamic-code-block";
+import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock';
 
 type Property = {
   isOptional: boolean;
@@ -173,8 +173,10 @@ export const APIMethod = ({
         noResult ? "" : `const ${resultVariable} = `
       }await auth.api.${functionName}(${serverBody});${code_suffix}`}
       lang="ts"
-      allowCopy={!isClientOnly}
-      className="rounded-b-lg"
+      codeblock={{
+        allowCopy: !isClientOnly,
+        className: "rounded-b-lg"
+      }}
     />
   );
 
@@ -314,8 +316,10 @@ export const APIMethod = ({
                     }, error } = `
               }await authClient.${authClientMethodPath}(${clientBody});${code_suffix}`}
               lang="ts"
-              allowCopy={!isServerOnly}
-              className="rounded-b-lg"
+              codeblock={{
+                allowCopy: !isServerOnly,
+                className: "rounded-b-lg"
+              }}
             />
             {isServerOnly ? (
               <div className="flex absolute inset-0 justify-center items-center w-full h-full rounded-lg border backdrop-brightness-50 backdrop-blur-xs border-border">
