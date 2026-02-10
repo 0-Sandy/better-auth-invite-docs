@@ -48,6 +48,15 @@ const config = {
           },
         ],
       },
+      {
+        source: "/showcase",
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "noindex, nofollow",
+          },
+        ],
+      },
     ];
   },
 };

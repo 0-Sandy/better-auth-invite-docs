@@ -6,6 +6,10 @@ import { Inter } from "next/font/google";
 export const metadata: Metadata = {
   verification: {
     google: "2_Rk36ZAi2agX8jVuzvGnG_mgC_4NSyeeQlTfyXoIdA"
+  },
+  title: {
+    default: "Better Auth Invite Docs",
+    template: "%s | Better Auth Invite Docs"
   }
 };
 
