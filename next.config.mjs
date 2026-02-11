@@ -20,34 +20,16 @@ const config = {
         destination: "/docs/introduction",
         permanent: true,
       },
-      /*{
+      {
         source: "/docs/examples",
-        destination: "/docs/examples/next-js",
-        permanent: true
-      }*/
+        destination: "/docs/examples/create-invite",
+        permanent: true,
+      },
     ];
   },
   //! Temporary
   headers() {
     return [
-      {
-        source: "/docs/examples/:path*",
-        headers: [
-          {
-            key: "X-Robots-Tag",
-            value: "noindex, nofollow",
-          },
-        ],
-      },
-      {
-        source: "/docs/guides/:path*",
-        headers: [
-          {
-            key: "X-Robots-Tag",
-            value: "noindex, nofollow",
-          },
-        ],
-      },
       {
         source: "/showcase",
         headers: [

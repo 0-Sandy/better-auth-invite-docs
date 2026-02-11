@@ -1,4 +1,5 @@
 import { Callout } from "fumadocs-ui/components/callout";
+import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 import { TypeTable } from "fumadocs-ui/components/type-table";
 import { Link } from "lucide-react";
 import type { JSX } from "react";
@@ -10,7 +11,6 @@ import {
   ApiMethodTabsTrigger,
 } from "./api-method-tabs";
 import { Endpoint } from "./endpoint";
-import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock';
 
 type Property = {
   isOptional: boolean;
@@ -175,7 +175,7 @@ export const APIMethod = ({
       lang="ts"
       codeblock={{
         allowCopy: !isClientOnly,
-        className: "rounded-b-lg"
+        className: "rounded-b-lg rounded-t-none",
       }}
     />
   );
@@ -186,7 +186,6 @@ export const APIMethod = ({
         <Endpoint
           method={method || "GET"}
           path={path}
-          isServerOnly={isServerOnly ?? false}
           className="rounded-t-lg"
         />
       )}
@@ -244,6 +243,8 @@ export const APIMethod = ({
               width="1em"
               height="1em"
               viewBox="0 0 36 36"
+              role="presentation"
+              aria-hidden="true"
             >
               <path
                 fill="currentColor"
@@ -266,6 +267,8 @@ export const APIMethod = ({
               width="1em"
               height="1em"
               viewBox="0 0 24 24"
+              role="presentation"
+              aria-hidden="true"
             >
               <path
                 fill="currentColor"
@@ -291,7 +294,6 @@ export const APIMethod = ({
             <Endpoint
               method={method || "GET"}
               path={path}
-              isServerOnly={isServerOnly ?? false}
               className="rounded-t-lg"
             />
           )}
@@ -318,7 +320,7 @@ export const APIMethod = ({
               lang="ts"
               codeblock={{
                 allowCopy: !isServerOnly,
-                className: "rounded-b-lg"
+                className: "rounded-b-lg rounded-t-none",
               }}
             />
             {isServerOnly ? (
@@ -384,31 +386,44 @@ function propsToTypeTable(props: Property[], isServer: boolean) {
       return true;
     })
     .map((prop) => {
-      const name =
-        `${prop.path.join(".")}${prop.path.length ? "." : ""}` + prop.propName;
+      const name = `${prop.path.join(".")}${prop.path.length ? "." : ""}${prop.propName}`;
 
-      const typeNode: ReactNode = <code>{prop.type}</code>;
+      const uniqueKey = `${name}-${prop.type}`;
+
+      const typeNode: ReactNode = (
+        <code key={`type-${uniqueKey}`}>{prop.type}</code>
+      );
 
       let fullType = prop.type;
       if (prop.isNullable) fullType += " | null";
       if (prop.isOptional) fullType += " | undefined";
 
-      const typeDescription: ReactNode = <code>{fullType}</code>;
+      const typeDescription: ReactNode = (
+        <code key={`type-desc-${uniqueKey}`}>{fullType}</code>
+      );
 
       const descriptionNode: ReactNode | undefined = prop.description
         ? tsxifyBackticks(prop.description)
         : undefined;
 
       const defaultNode: ReactNode | undefined = prop.defaultValue ? (
-        <code>{prop.defaultValue}</code>
+        <code key={`default-${uniqueKey}`}>{prop.defaultValue}</code>
       ) : undefined;
 
       const parametersNode = prop.params
-        ? Object.entries(prop.params).map(([name, value]) => ({
-            name,
-            type: <code>{typeof value}</code>,
+        ? Object.entries(prop.params).map(([paramName, value]) => ({
+            name: paramName,
+            type: (
+              <code key={`param-type-${uniqueKey}-${paramName}`}>
+                {typeof value}
+              </code>
+            ),
             description:
-              value != null ? <code>{String(value)}</code> : undefined,
+              value != null ? (
+                <code key={`param-desc-${uniqueKey}-${paramName}`}>
+                  {String(value)}
+                </code>
+              ) : undefined,
           }))
         : undefined;
 
@@ -423,7 +438,9 @@ function propsToTypeTable(props: Property[], isServer: boolean) {
           required: !prop.isOptional,
           deprecated: prop.deprecated ?? undefined,
           parameters: parametersNode,
-          returns: prop.returns ? <code>{prop.returns}</code> : undefined,
+          returns: prop.returns ? (
+            <code key={`returns-${uniqueKey}`}>{prop.returns}</code>
+          ) : undefined,
         },
       ] as const;
     });
@@ -436,12 +453,12 @@ function tsxifyBackticks(input: string): JSX.Element {
 
   return (
     <>
-      {parts.map((part, index) => {
+      {parts.map((part) => {
         if (part.startsWith("`") && part.endsWith("`")) {
           const content = part.slice(1, -1); // remove backticks
-          return <code key={index}>{content}</code>;
+          return <code key={`code-${content}`}>{content}</code>;
         } else {
-          return <span key={index}>{part}</span>;
+          return <span key={`text-${part}`}>{part}</span>;
         }
       })}
     </>
@@ -452,11 +469,11 @@ function parseCode(children: JSX.Element) {
   // These two variables are essentially taking the `children` JSX shiki code, and converting them to
   // an array string purely of it's code content.
   const arrayOfJSXCode = children?.props.children.props.children.props.children
-    .map((x: any) =>
+    .map((x: unknown) =>
       x === "\n" ? { props: { children: { props: { children: "\n" } } } } : x,
     )
-    .map((x: any) => x.props.children)
-    .filter((x: any) => x != null);
+    .map((x: unknown) => (x as { props: { children: string } }).props.children)
+    .filter((x: unknown) => x != null);
   const arrayOfCode: string[] = arrayOfJSXCode
     .flatMap(
       (
@@ -477,7 +494,6 @@ function parseCode(children: JSX.Element) {
   let jsDocLink: string | null = null;
   let jsDocParams: Record<string, unknown> | undefined;
   let jsDocReturns: string | null = null;
-  const jsDocComment: string | null = null;
 
   let withinApiMethodType = false;
   let hasAlreadyDefinedApiMethodType = false;
@@ -519,9 +535,9 @@ function parseCode(children: JSX.Element) {
 
     if (!withinApiMethodType) {
       if (!hasAlreadyDefinedApiMethodType) {
-        code_prefix += originalLine + "\n";
+        code_prefix += `${originalLine}\n`;
       } else {
-        code_suffix += "\n" + originalLine + "";
+        code_suffix += `\n${originalLine}`;
       }
       continue;
     }
@@ -558,7 +574,7 @@ function parseCode(children: JSX.Element) {
           const paramsString = trimmed.replace("@params", "").trim() || "{}";
           try {
             jsDocParams = JSON.parse(paramsString);
-          } catch (e) {
+          } catch {
             jsDocParams = {};
           }
           continue;
@@ -569,7 +585,7 @@ function parseCode(children: JSX.Element) {
           jsDocDefaultValue = trimmed.replace("@default", "").trim() || null;
           continue;
         }
-        currentJSDocDescription += line + " ";
+        currentJSDocDescription += `${line} `;
       }
     } else {
       // New property field
@@ -577,17 +593,18 @@ function parseCode(children: JSX.Element) {
       // name: string = "My Organization",
 
       let propName = line.split(":")[0].trim();
-      const isOptional = propName.endsWith("?") ? true : false;
+      const isOptional = !!propName.endsWith("?");
       if (isOptional) propName = propName.slice(0, -1); // Remove `?` in propname.
 
       const [beforeComment, inlineComment] = line.split("//");
 
-      let propType = beforeComment
-        .replace(propName, "")
-        .replace("?", "")
-        .replace(":", "")
-        .split("=")[0]
-        .trim()!;
+      let propType =
+        beforeComment
+          .replace(propName, "")
+          .replace("?", "")
+          .replace(":", "")
+          .split("=")[0]
+          .trim() || "";
 
       let isTheStartOfNest = false;
       if (propType === "{") {

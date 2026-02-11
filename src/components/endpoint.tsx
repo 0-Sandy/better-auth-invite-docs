@@ -12,12 +12,10 @@ function Method({ method }: { method: "POST" | "GET" | "DELETE" | "PUT" }) {
 export function Endpoint({
   path,
   method,
-  isServerOnly,
   className,
 }: {
   path: string;
   method: "POST" | "GET" | "DELETE" | "PUT";
-  isServerOnly?: boolean;
   className?: string;
 }) {
   return (

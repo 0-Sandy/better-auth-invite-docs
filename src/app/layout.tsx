@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
 import { RootProvider } from "fumadocs-ui/provider/next";
+import type { Metadata } from "next";
 import "./global.css";
 import { Inter } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
   verification: {
@@ -44,7 +45,10 @@ export default function Layout({ children }: LayoutProps<"/">) {
         <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
       </head>
       <body className="flex flex-col min-h-screen">
-        <RootProvider>{children}</RootProvider>
+        <RootProvider>
+          {children}
+          <SpeedInsights />
+        </RootProvider>
       </body>
     </html>
   );

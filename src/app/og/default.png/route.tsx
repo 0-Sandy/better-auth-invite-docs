@@ -4,9 +4,7 @@ import { Logo } from "@/components/logo";
 
 export const revalidate = false;
 
-export async function GET(
-  _req: Request,
-) {
+export async function GET(_req: Request) {
   return new ImageResponse(
     <DefaultImage
       title=""

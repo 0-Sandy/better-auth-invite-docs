@@ -28,9 +28,14 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
 
   const lastModifiedTime = page.data.lastModified;
   const MDX = page.data.body;
-  const gitConfig = {
+  const gitDocsConfig = {
     user: "0-Sandy",
     repo: "better-auth-invite-docs",
+    branch: "main",
+  };
+  const gitPackageConfig = {
+    user: "0-Sandy",
+    repo: "better-auth-invite-plugin",
     branch: "main",
   };
   const npmName = "better-auth-invite-plugin";
@@ -46,12 +51,12 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
         <ViewOptions
           markdownUrl={`${page.url}.mdx`}
           // update it to match your repo
-          githubUrl={`https://github.com/${gitConfig.user}/${gitConfig.repo}/blob/${gitConfig.branch}/docs/content/docs/${page.path}`}
+          githubUrl={`https://github.com/${gitDocsConfig.user}/${gitDocsConfig.repo}/blob/${gitDocsConfig.branch}/docs/content/docs/${page.path}`}
         />
         <GithubButton
           label="Source"
-          username={gitConfig.user}
-          repository={gitConfig.repo}
+          username={gitDocsConfig.user}
+          repository={gitDocsConfig.repo}
         />
         <NpmButton packageName={npmName} />
       </div>
@@ -68,8 +73,8 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
             APIMethod,
             GithubInfo: (props) => (
               <GithubInfo
-                owner={gitConfig.user}
-                repo={gitConfig.repo}
+                owner={gitPackageConfig.user}
+                repo={gitPackageConfig.repo}
                 {...props}
               />
             ),
@@ -95,7 +100,7 @@ export async function generateMetadata(
   const page = source.getPage(params.slug);
   if (!page) notFound();
   const images = getPageImage(page).url;
-  const path = params.slug ? `/docs/${params.slug?.join("/")}` : "/docs"
+  const path = params.slug ? `/docs/${params.slug?.join("/")}` : "/docs";
 
   return {
     title: page.data.title,
@@ -104,12 +109,12 @@ export async function generateMetadata(
       images,
       description: page.data.description,
       title: page.data.title,
-      url: path
+      url: path,
     },
     twitter: {
       images,
       description: page.data.description,
-      title: page.data.title
+      title: page.data.title,
     },
   };
 }
