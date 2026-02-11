@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./global.css";
 import { Inter } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next"
 
 export const metadata: Metadata = {
   verification: {
@@ -48,6 +49,7 @@ export default function Layout({ children }: LayoutProps<"/">) {
         <RootProvider>
           {children}
           <SpeedInsights />
+          <Analytics />
         </RootProvider>
       </body>
     </html>
