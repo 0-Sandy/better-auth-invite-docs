@@ -13,7 +13,7 @@ export const DocsCategory = "Docs Feedback";
 
 let instance: Octokit | undefined;
 
-async function getOctokit() {
+async function getOctokit(): Promise<Octokit> {
   if (instance) return instance;
   const appId = process.env.GITHUB_APP_ID;
   const privateKey = process.env.GITHUB_APP_PRIVATE_KEY;
@@ -26,7 +26,7 @@ async function getOctokit() {
 
   const app = new App({
     appId,
-    privateKey,
+    privateKey: privateKey.replace(/\\n/g, "\n"), // To fix vercel's errors with multiline env
   });
 
   const { data } = await app.octokit.request(
