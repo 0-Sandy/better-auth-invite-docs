@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import type { ReactNode } from "react";
 import { Logo } from "@/components/logo";
+import { baseUrl } from "@/lib/metadata";
 
 export interface GenerateProps {
   title: ReactNode;
@@ -30,6 +31,7 @@ export async function getImageResponseOptions() {
 export function generate({ title, description }: GenerateProps) {
   const siteName = "Better Auth Invite Plugin";
   const primaryTextColor = "rgb(240,240,240)";
+  console.log(baseUrl.href);
 
   return (
     <div
@@ -39,7 +41,9 @@ export function generate({ title, description }: GenerateProps) {
         width: "100%",
         height: "100%",
         color: "white",
-        backgroundColor: "rgb(10,10,10)",
+        backgroundImage: `url(${baseUrl.href}/background.png)`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
     >
       <div
