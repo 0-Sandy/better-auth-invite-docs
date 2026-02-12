@@ -6,10 +6,10 @@ import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { TypeTable } from "fumadocs-ui/components/type-table";
 import { createRelativeLink } from "fumadocs-ui/mdx";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { LLMCopyButton, ViewOptions } from "@/components/ai/page-actions";
 import { APIMethod } from "@/components/api-method";
 import { GithubButton } from "@/components/github-button";
+import { NotFound } from "@/components/layout/not-found";
 import {
   DocsBody,
   DocsDescription,
@@ -18,13 +18,14 @@ import {
   PageLastUpdate,
 } from "@/components/layout/notebook/page";
 import { NpmButton } from "@/components/npm-button";
-import { getPageImage, source } from "@/lib/source";
+import { createMetadata, getPageImage } from "@/lib/metadata";
+import { source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
 export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
   const params = await props.params;
   const page = source.getPage(params.slug);
-  if (!page) notFound();
+  if (!page) return <NotFound />;
 
   const lastModifiedTime = page.data.lastModified;
   const MDX = page.data.body;
@@ -98,23 +99,33 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const params = await props.params;
   const page = source.getPage(params.slug);
-  if (!page) notFound();
-  const images = getPageImage(page).url;
-  const path = params.slug ? `/docs/${params.slug?.join("/")}` : "/docs";
+  if (!page)
+    return createMetadata({
+      title: "Not Found",
+    });
 
-  return {
+  const description =
+    page.data.description ?? "The library to invite users to your app";
+
+  const image = {
+    url: getPageImage(page).url,
+    width: 1200,
+    height: 630,
+  };
+
+  return createMetadata({
     title: page.data.title,
-    description: page.data.description,
+    description,
     openGraph: {
-      images,
-      description: page.data.description,
+      url: `/docs/${page.slugs.join("/")}`,
       title: page.data.title,
-      url: path,
+      description,
+      images: [image],
     },
     twitter: {
-      images,
-      description: page.data.description,
+      images: [image],
       title: page.data.title,
+      description,
     },
-  };
+  });
 }

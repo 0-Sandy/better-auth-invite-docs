@@ -1,38 +1,32 @@
-import { generate as DefaultImage } from "fumadocs-ui/og";
 import { notFound } from "next/navigation";
 import { ImageResponse } from "next/og";
-import { Logo } from "@/components/logo";
-import { getPageImage, source } from "@/lib/source";
+import { getPageImage } from "@/lib/metadata";
+import { source } from "@/lib/source";
+import { getImageResponseOptions, generate as MetadataImage } from "./generate";
 
 export const revalidate = false;
 
 export async function GET(
   _req: Request,
-  { params }: RouteContext<"/og/docs/[...slug]">,
+  { params }: RouteContext<"/og/[...slug]">,
 ) {
   const { slug } = await params;
   const page = source.getPage(slug.slice(0, -1));
   if (!page) notFound();
 
   return new ImageResponse(
-    <DefaultImage
+    <MetadataImage
       title={page.data.title}
       description={page.data.description}
-      icon={<Logo />}
-      site="Better Auth Invite Docs"
-      primaryColor="#0B1220"
-      primaryTextColor="#E6EDF7"
     />,
-    {
-      width: 1200,
-      height: 630,
-    },
+    await getImageResponseOptions(),
   );
 }
 
-export function generateStaticParams() {
+export function generateStaticParams(): {
+  slug: string[];
+}[] {
   return source.getPages().map((page) => ({
-    lang: page.locale,
     slug: getPageImage(page).segments,
   }));
 }

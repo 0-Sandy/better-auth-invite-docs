@@ -8,7 +8,7 @@ export const Logo = (props: SVGProps<SVGSVGElement>) => {
       viewBox="0 0 45 60"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      aria-label="Better Auth logo"
+      aria-label="Better Auth Invite Plugin logo"
       role="img"
       {...props}
     >

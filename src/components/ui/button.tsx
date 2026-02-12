@@ -7,6 +7,7 @@ const variants = {
   ghost: "hover:bg-fd-accent hover:text-fd-accent-foreground",
   secondary:
     "border bg-fd-secondary text-fd-secondary-foreground hover:bg-fd-accent hover:text-fd-accent-foreground",
+  link: "text-primary underline-offset-4 hover:underline",
 } as const;
 
 export const buttonVariants = cva(
@@ -18,6 +19,7 @@ export const buttonVariants = cva(
       color: variants,
       size: {
         sm: "gap-1 px-2 py-1.5 text-xs",
+        lg: "gap-2 px-4 py-2.5 text-base",
         icon: "p-1.5 [&_svg]:size-5",
         "icon-sm": "p-1.5 [&_svg]:size-4.5",
         "icon-xs": "p-1 [&_svg]:size-4",
