@@ -16,7 +16,7 @@ export const Logo = (props: SVGProps<SVGSVGElement>) => {
         fillRule="evenodd"
         clipRule="evenodd"
         d="M0 60V45H15V30H30V45H45V60H30 15 0ZM30 15H15V30H0V15 0H15 30 45V15 30H30V15Z"
-        fill="#E6EDF7"
+        fill="currentColor"
       />
     </svg>
   );
