@@ -78,6 +78,17 @@ async function getFeedbackDestination() {
   return cachedDestination;
 }
 
+function opinionText(opinion: "good" | "neutral" | "bad"): string {
+  switch (opinion) {
+    case "good":
+      return "👍 Good";
+    case "neutral":
+      return "😑 Meh";
+    case "bad":
+      return "👎 Bad";
+  }
+}
+
 export async function onPageFeedbackAction(
   feedback: PageFeedback,
 ): Promise<ActionResponse> {
@@ -85,7 +96,7 @@ export async function onPageFeedbackAction(
   feedback = pageFeedback.parse(feedback);
   return createDiscussionThread(
     feedback.url,
-    `[${feedback.opinion}] ${feedback.message}\n\n> Forwarded from user feedback.`,
+    `[${opinionText(feedback.opinion)}] ${feedback.message}\n\n> Forwarded from user feedback.`,
   );
 }
 
