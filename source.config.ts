@@ -1,4 +1,7 @@
-import { remarkMdxMermaid } from "fumadocs-core/mdx-plugins";
+import {
+  remarkFeedbackBlock,
+  remarkMdxMermaid,
+} from "fumadocs-core/mdx-plugins";
 import {
   defineConfig,
   defineDocs,
@@ -29,7 +32,7 @@ export default defineConfig({
         id: "package-manager",
       },
     },
-    remarkPlugins: [remarkMdxMermaid],
+    remarkPlugins: [remarkMdxMermaid, remarkFeedbackBlock],
   },
   plugins: [lastModified()],
 });

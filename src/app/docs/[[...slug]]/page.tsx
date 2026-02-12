@@ -8,6 +8,7 @@ import { createRelativeLink } from "fumadocs-ui/mdx";
 import type { Metadata } from "next";
 import { LLMCopyButton, ViewOptions } from "@/components/ai/page-actions";
 import { APIMethod } from "@/components/api-method";
+import { Feedback, FeedbackBlock } from "@/components/feedback/client";
 import { GithubButton } from "@/components/github-button";
 import { NotFound } from "@/components/layout/not-found";
 import {
@@ -18,6 +19,7 @@ import {
   PageLastUpdate,
 } from "@/components/layout/notebook/page";
 import { NpmButton } from "@/components/npm-button";
+import { onBlockFeedbackAction, onPageFeedbackAction } from "@/lib/github";
 import { createMetadata, getPageImage } from "@/lib/metadata";
 import { source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
@@ -82,9 +84,15 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
             TypeTable,
             Accordions,
             Accordion,
+            FeedbackBlock: ({ children, ...props }) => (
+              <FeedbackBlock {...props} onSendAction={onBlockFeedbackAction}>
+                {children}
+              </FeedbackBlock>
+            ),
           })}
         />
       </DocsBody>
+      <Feedback onSendAction={onPageFeedbackAction} />
       {lastModifiedTime && <PageLastUpdate date={lastModifiedTime} />}
     </DocsPage>
   );
