@@ -20,6 +20,24 @@ export function createMetadata(override: Metadata): Metadata {
       images: "/og.png",
       ...override.twitter,
     },
+    icons: [
+      {
+        media: "(prefers-color-scheme: light)",
+        url: "/favicon/icon-light.png",
+        href: "/favicon/icon-light.png",
+      },
+      {
+        media: "(prefers-color-scheme: dark)",
+        url: "/favicon/icon-dark.png",
+        href: "/favicon/icon-dark.png",
+      },
+      {
+        media: "(max-width: 0px)", // If the browser supports media, it will not use the normal favicon
+        url: "/favicon/favicon.ico", // This is only here as a fallback if the browser doesn't support media
+        href: "/favicon/favicon.ico",
+        sizes: "any",
+      },
+    ],
   };
 }
 
