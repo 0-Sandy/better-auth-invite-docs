@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
+import type { ImageResponseOptions } from "next/server";
 import type { ReactNode } from "react";
-import { Logo } from "@/components/logo";
 import { baseUrl } from "@/lib/metadata";
 
 export interface GenerateProps {
@@ -13,84 +13,84 @@ const font = readFile("./src/lib/og/Geist-Regular.ttf").then((data) => ({
   data,
   weight: 400 as const,
 }));
-const fontMedium = readFile("./src/lib/og/Geist-Medium.ttf").then((data) => ({
+const fontBold = readFile("./src/lib/og/Geist-Bold.ttf").then((data) => ({
   name: "Geist",
   data,
   weight: 600 as const,
 }));
 
-export async function getImageResponseOptions() {
+type Weight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+type Style = "normal" | "italic";
+interface FontOptions {
+  data: Buffer | ArrayBuffer;
+  name: string;
+  weight?: Weight;
+  style?: Style;
+  lang?: string;
+}
+
+let cachedFonts: Promise<FontOptions[]> | null = null;
+
+function getCachedFonts() {
+  if (!cachedFonts) {
+    cachedFonts = Promise.all([font, fontBold]);
+  }
+  return cachedFonts;
+}
+
+export async function getImageResponseOptions(): Promise<ImageResponseOptions> {
   return {
     width: 1200,
     height: 630,
-    format: "webp",
-    fonts: await Promise.all([font, fontMedium]),
+    fonts: await getCachedFonts(),
   };
 }
 
 export function generate({ title, description }: GenerateProps) {
-  const siteName = "Better Auth Invite Plugin";
-  const primaryTextColor = "rgb(240,240,240)";
-  console.log(baseUrl.href);
-
   return (
     <div
       style={{
+        width: 1200,
+        height: 630,
         display: "flex",
         flexDirection: "column",
-        width: "100%",
-        height: "100%",
+        justifyContent: "flex-end",
         color: "white",
         backgroundImage: `url(${baseUrl.href}/background.png)`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        padding: "52px 58px 99px",
       }}
     >
       <div
         style={{
+          width: 482,
           display: "flex",
           flexDirection: "column",
-          width: "100%",
-          height: "100%",
-          padding: "4rem",
+          gap: 16,
         }}
       >
-        <span
+        <div
           style={{
+            fontSize: 96,
             fontWeight: 600,
-            fontSize: "76px",
+            lineHeight: 0.74,
+            textAlign: "center",
           }}
         >
           {title}
-        </span>
-        <p
-          style={{
-            fontSize: "48px",
-            color: "rgba(240,240,240,0.7)",
-          }}
-        >
-          {description}
-        </p>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            gap: "24px",
-            marginTop: "auto",
-            color: primaryTextColor,
-          }}
-        >
-          <Logo />
-          <span
+        </div>
+
+        {description ? (
+          <div
             style={{
-              fontSize: "46px",
-              fontWeight: 600,
+              fontSize: 20,
+              lineHeight: 1.3,
+              color: "#949494",
+              letterSpacing: "-0.01em",
             }}
           >
-            {siteName}
-          </span>
-        </div>
+            {description}
+          </div>
+        ) : null}
       </div>
     </div>
   );

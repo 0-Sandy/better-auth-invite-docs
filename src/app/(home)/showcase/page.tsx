@@ -1,9 +1,30 @@
 import type { Metadata } from "next";
-export const metadata: Metadata = {
+import { createMetadata } from "@/lib/metadata";
+
+const description =
+  "See a real example of the Better Auth Invite Plugin — from invite creation to signup.";
+
+const image = {
+  url: "/showcase.png",
+  width: 1200,
+  height: 630,
+};
+
+export const metadata: Metadata = createMetadata({
+  title: "Showcase",
+  description,
   openGraph: {
     url: "/showcase",
+    title: "Showcase",
+    description,
+    images: [image],
   },
-};
+  twitter: {
+    images: [image],
+    title: "Showcase",
+    description,
+  },
+});
 
 export default function ShowcasePage() {
   return (
