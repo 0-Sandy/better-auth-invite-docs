@@ -12,10 +12,6 @@ export function baseOptions(): BaseLayoutProps {
       ),
       transparentMode: "top",
     },
-    links: [
-      { text: "Docs", url: "/docs" },
-      { text: "Showcase", url: "/showcase" },
-    ],
     githubUrl: "https://github.com/0-Sandy/better-auth-invite-plugin",
   };
 }

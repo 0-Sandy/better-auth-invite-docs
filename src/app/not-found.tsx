@@ -1,7 +1,7 @@
 "use client";
 
 import { HomeLayout } from "fumadocs-ui/layouts/home";
-import { NotFound as NotFoundComponent } from "@/components/layout/not-found";
+import { NotFound as NotFoundComponent } from "@/components/not-found";
 import { baseOptions } from "@/lib/layout.shared";
 
 export default function NotFound() {

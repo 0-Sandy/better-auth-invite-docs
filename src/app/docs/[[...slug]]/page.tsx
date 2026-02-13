@@ -4,20 +4,20 @@ import { GithubInfo } from "fumadocs-ui/components/github-info";
 import { Step, Steps } from "fumadocs-ui/components/steps";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { TypeTable } from "fumadocs-ui/components/type-table";
-import { createRelativeLink } from "fumadocs-ui/mdx";
-import type { Metadata } from "next";
-import { LLMCopyButton, ViewOptions } from "@/components/ai/page-actions";
-import { APIMethod } from "@/components/api-method";
-import { Feedback, FeedbackBlock } from "@/components/feedback/client";
-import { GithubButton } from "@/components/github-button";
-import { NotFound } from "@/components/layout/not-found";
 import {
   DocsBody,
   DocsDescription,
   DocsPage,
   DocsTitle,
   PageLastUpdate,
-} from "@/components/layout/notebook/page";
+} from "fumadocs-ui/layouts/docs/page";
+import { createRelativeLink } from "fumadocs-ui/mdx";
+import type { Metadata } from "next";
+import { LLMCopyButton, ViewOptions } from "@/components/ai/page-actions";
+import { APIMethod } from "@/components/api-method";
+import { Feedback, FeedbackBlock } from "@/components/feedback/client";
+import { GithubButton } from "@/components/github-button";
+import { NotFound } from "@/components/not-found";
 import { NpmButton } from "@/components/npm-button";
 import { onBlockFeedbackAction, onPageFeedbackAction } from "@/lib/github";
 import { createMetadata, getPageImage } from "@/lib/metadata";
