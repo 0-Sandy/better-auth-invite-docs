@@ -143,7 +143,7 @@ async function createDiscussionThread(pageId: string, body: string) {
 
   if (discussion) {
     const result: {
-      addDiscussionComment: {
+      addDiscussionComment?: {
         comment: { id: string; url: string };
       };
     } = await octokit.graphql(`
@@ -153,12 +153,23 @@ async function createDiscussionThread(pageId: string, body: string) {
               }
             }`);
 
+    const githubUrl = result.addDiscussionComment?.comment.url;
+
+    if (!githubUrl) {
+      console.warn(
+        `Failed to add comment to GitHub discussion for page "${pageId}" in category "${DocsCategory}". ` +
+          `Unexpected result received: ${JSON.stringify(result, null, 2)}`,
+      );
+      return {}; // no githubUrl
+    }
+
     return {
-      githubUrl: result.addDiscussionComment.comment.url,
+      githubUrl,
     };
   } else {
     const result: {
-      discussion: { id: string; url: string };
+      createDiscussion?: { discussion: { id: string; url: string } };
+      discussion?: { id: string; url: string }; // as a fallback
     } = await octokit.graphql(`
             mutation {
               createDiscussion(input: { repositoryId: "${destination.id}", categoryId: "${category.id}", body: ${JSON.stringify(body)}, title: ${JSON.stringify(title)} }) {
@@ -166,8 +177,19 @@ async function createDiscussionThread(pageId: string, body: string) {
               }
             }`);
 
+    const githubUrl =
+      result.discussion?.url ?? result.createDiscussion?.discussion.url;
+
+    if (!githubUrl) {
+      console.warn(
+        `Failed to create GitHub discussion for page "${pageId}" in category "${DocsCategory}". ` +
+          `Unexpected result received: ${JSON.stringify(result, null, 2)}`,
+      );
+      return {}; // no githubUrl
+    }
+
     return {
-      githubUrl: result.discussion.url,
+      githubUrl,
     };
   }
 }
