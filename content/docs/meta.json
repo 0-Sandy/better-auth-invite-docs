@@ -1,3 +1,13 @@
 {
-  "pages": ["(get-started)", "core", "reference"]
+  "pages": [
+    "---Getting Started---",
+    "...(get-started)",
+    "---Core---",
+    "...core",
+    "---Reference---",
+    "...reference",
+    "---For LLMs---",
+    "[Leaf][llms.txt](/llms.txt)",
+    "[Brain][llms-full.txt](/llms-full.txt)"
+  ]
 }

@@ -34,7 +34,7 @@ export const auth = betterAuth({ // [!code focus]
       ac,
       roles: { user, admin },
       defaultRole: "user",
-    })
+    }),
     invite({ // [!code highlight] [!code focus]
       defaultMaxUses: 1, // Default max uses for public invites // [!code focus]
       defaultRedirectAfterUpgrade: "/auth/invited", // Show the user their new role or account // [!code focus]
