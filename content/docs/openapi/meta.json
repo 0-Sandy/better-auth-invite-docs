@@ -1,0 +1,11 @@
+{
+  "title": "OpenAPI",
+  "description": "Test",
+  "root": true,
+  "icon": "Network",
+  "pages": [
+    "(generated)/createInvite",
+    "(generated)/activateInvite",
+    "(generated)/activateInviteCallback"
+  ]
+}

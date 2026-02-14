@@ -12,6 +12,10 @@ const config = {
         destination: "/llms.mdx/docs/:path*",
       },
       {
+        source: "/docs.mdx",
+        destination: "/llms.mdx",
+      },
+      {
         source: "/docs/:path*.md",
         destination: "/llms.mdx/docs/:path*",
       },
@@ -27,6 +31,11 @@ const config = {
       {
         source: "/docs/examples",
         destination: "/docs/examples/create-invite",
+        permanent: true,
+      },
+      {
+        source: "/docs/openapi",
+        destination: "/docs/openapi/createInvite",
         permanent: true,
       },
     ];

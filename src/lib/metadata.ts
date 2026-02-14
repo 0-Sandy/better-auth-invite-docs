@@ -38,6 +38,20 @@ export function createMetadata(override: Metadata): Metadata {
         sizes: "any",
       },
     ],
+    /*
+    TODO: add in future
+    alternates: {
+      types: {
+        'application/rss+xml': [
+          {
+            title: 'Better Auth Invite Blog',
+            url: 'https://better-auth-invite.vercel.app/blog/rss.xml',
+          },
+        ],
+      },
+      ...override.alternates,
+    },
+    */
   };
 }
 

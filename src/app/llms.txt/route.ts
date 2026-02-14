@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getSection } from "@/lib/navigation";
 import { source } from "@/lib/source";
 
 export const revalidate = false;
@@ -10,30 +11,15 @@ interface PageInfo {
   category: string;
 }
 
-function cleanPath(path: string): string[] {
-  const parts = path.split("/");
-
-  // quitar () del primer elemento si existen
-  if (parts[0].startsWith("(") && parts[0].endsWith(")")) {
-    parts[0] = parts[0].slice(1, -1);
-  }
-
-  // quitar .mdx del último elemento
-  const lastIndex = parts.length - 1;
-  parts[lastIndex] = parts[lastIndex].replace(/\.mdx$/, "");
-
-  return parts;
-}
-
 function groupPagesByCategory(pages: any[]): Map<string, PageInfo[]> {
   const grouped = new Map<string, PageInfo[]>();
 
   for (const page of pages) {
     // Skip openapi pages
     if (page.slugs[0] === "openapi") continue;
-    const slugs = cleanPath(page.path);
+    
+    const category = getSection(page.slugs[0]);
 
-    const category = slugs[0] || "general";
     const pageInfo: PageInfo = {
       title: page.data.title,
       description: page.data.description || "",

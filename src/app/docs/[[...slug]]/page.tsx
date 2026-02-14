@@ -29,8 +29,19 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
   const page = source.getPage(params.slug);
   if (!page) return <NotFound />;
 
-  const lastModifiedTime = page.data.lastModified;
-  const MDX = page.data.body;
+  if (page.data.type === "openapi") {
+    const { APIPage } = await import("@/components/api-page");
+    return (
+      <DocsPage full>
+        <h1 className="text-[1.75em] font-semibold">{page.data.title}</h1>
+
+        <DocsBody>
+          <APIPage {...page.data.getAPIPageProps()} />
+        </DocsBody>
+      </DocsPage>
+    );
+  }
+
   const gitDocsConfig = {
     user: "0-Sandy",
     repo: "better-auth-invite-docs",
@@ -42,6 +53,9 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
     branch: "main",
   };
   const npmName = "better-auth-invite-plugin";
+
+  const lastModifiedTime = page.data.lastModified;
+  const MDX = page.data.body;
 
   return (
     <DocsPage toc={page.data.toc} full={page.data.full}>

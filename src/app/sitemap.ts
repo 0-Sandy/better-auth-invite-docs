@@ -8,6 +8,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const url = (path: string): string => new URL(path, baseUrl).toString();
   const items = await Promise.all(
     source.getPages().map(async (page) => {
+      if (page.data.type === "openapi") return;
+
       const lastModified = page.data.lastModified;
 
       return {
@@ -30,6 +32,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.8,
     },*/
-    ...items,
+    ...items.filter((v) => v !== undefined),
   ];
 }

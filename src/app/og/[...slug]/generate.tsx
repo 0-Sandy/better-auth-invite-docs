@@ -56,7 +56,7 @@ export function generate({ title, description }: GenerateProps) {
         flexDirection: "column",
         justifyContent: "flex-end",
         color: "white",
-        backgroundImage: `url(${baseUrl.href}/background.png)`,
+        backgroundImage: `url(${baseUrl.href}background.png)`,
         padding: "52px 58px 99px",
       }}
     >
