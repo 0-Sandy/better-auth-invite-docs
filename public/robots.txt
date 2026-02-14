@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Disallow: /showcase/
+
+Host: https://better-auth-invite.vercel.app
+
+Sitemap: https://better-auth-invite.vercel.app/sitemap.xml
