@@ -17,6 +17,7 @@ import { LLMCopyButton, ViewOptions } from "@/components/ai/page-actions";
 import { APIMethod } from "@/components/api-method";
 import { Feedback, FeedbackBlock } from "@/components/feedback/client";
 import { GithubButton } from "@/components/github-button";
+import { GithubUser } from "@/components/github-user";
 import { NotFound } from "@/components/not-found";
 import { NpmButton } from "@/components/npm-button";
 import { onBlockFeedbackAction, onPageFeedbackAction } from "@/lib/github";
@@ -103,6 +104,7 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
                 {children}
               </FeedbackBlock>
             ),
+            GithubUser,
           })}
         />
       </DocsBody>

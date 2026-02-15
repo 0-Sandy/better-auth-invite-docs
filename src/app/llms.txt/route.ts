@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSection } from "@/lib/navigation";
+import { formatCategoryName, getSection } from "@/lib/navigation";
 import { source } from "@/lib/source";
 
 export const revalidate = false;
@@ -17,7 +17,7 @@ function groupPagesByCategory(pages: any[]): Map<string, PageInfo[]> {
   for (const page of pages) {
     // Skip openapi pages
     if (page.slugs[0] === "openapi") continue;
-    
+
     const category = getSection(page.slugs[0]);
 
     const pageInfo: PageInfo = {
@@ -34,13 +34,6 @@ function groupPagesByCategory(pages: any[]): Map<string, PageInfo[]> {
   }
 
   return grouped;
-}
-
-function formatCategoryName(category: string): string {
-  return category
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
 }
 
 export async function GET() {

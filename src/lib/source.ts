@@ -2,6 +2,7 @@ import { docs } from "fumadocs-mdx:collections/server";
 import { type InferPageType, loader, multiple } from "fumadocs-core/source";
 import { lucideIconsPlugin } from "fumadocs-core/source/lucide-icons";
 import { openapiPlugin, openapiSource } from "fumadocs-openapi/server";
+import { formatCategoryName, getSection } from "./navigation";
 import { openapi } from "./openapi";
 
 // See https://fumadocs.dev/docs/headless/source-api for more info
@@ -19,13 +20,20 @@ export const source = loader(
 );
 
 export async function getLLMText(page: InferPageType<typeof source>) {
-  if (page.data.type === "openapi") {
-    return JSON.stringify(page.data.getSchema().bundled, null, 2);
-  }
+  if (page.data.type === "openapi") return "";
 
-  const processed = await page.data.getText("processed");
+  const section = getSection(page.slugs[0]);
+  const category = formatCategoryName(section);
 
-  return `# ${page.data.title}
+  const processed = (await page.data.getText("processed")).trimStart();
+
+  return `# ${category}: ${page.data.title}
+URL: ${page.url}
+Source: https://raw.githubusercontent.com/0-Sandy/better-auth-invite-docs/refs/heads/main/content/docs/${page.path}
+
+${page.data.description}
+
+---
 
 ${processed}`;
 }
