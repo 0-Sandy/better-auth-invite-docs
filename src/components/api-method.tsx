@@ -175,7 +175,7 @@ export const APIMethod = ({
       lang="ts"
       codeblock={{
         allowCopy: !isClientOnly,
-        className: "rounded-b-lg rounded-t-none",
+        className: "rounded-b-lg rounded-t-none border-t-0",
       }}
     />
   );
@@ -320,7 +320,7 @@ export const APIMethod = ({
               lang="ts"
               codeblock={{
                 allowCopy: !isServerOnly,
-                className: "rounded-b-lg rounded-t-none",
+                className: "rounded-b-lg rounded-t-none border-t-0",
               }}
             />
             {isServerOnly ? (
@@ -920,7 +920,7 @@ function createServerBody({
 
 function Note({ children }: { children: ReactNode }) {
   return (
-    <Callout type="info" className="m-0 rounded-none">
+    <Callout type="info" className="my-0 py-2 rounded-none border-y-0">
       {children}
     </Callout>
   );

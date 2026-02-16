@@ -15,6 +15,7 @@ import { createRelativeLink } from "fumadocs-ui/mdx";
 import type { Metadata } from "next";
 import { LLMCopyButton, ViewOptions } from "@/components/ai/page-actions";
 import { APIMethod } from "@/components/api-method";
+import DatabaseTable from "@/components/database-table";
 import { Feedback, FeedbackBlock } from "@/components/feedback/client";
 import { GithubButton } from "@/components/github-button";
 import { GithubUser } from "@/components/github-user";
@@ -105,6 +106,7 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
               </FeedbackBlock>
             ),
             GithubUser,
+            DatabaseTable,
           })}
         />
       </DocsBody>

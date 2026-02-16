@@ -1,11 +1,22 @@
 "use client";
 import { cn } from "@/lib/cn";
+import { Badge } from "./ui/badge";
 
 function Method({ method }: { method: "POST" | "GET" | "DELETE" | "PUT" }) {
   return (
-    <div className="flex items-center justify-center h-6 px-2 text-sm font-semibold uppercase border rounded-lg select-none w-fit font-display bg-background">
+    <Badge
+      variant="outline"
+      className={
+        {
+          POST: "text-amber-500",
+          GET: "text-emerald-500",
+          DELETE: "text-red-500",
+          PUT: "text-indigo-500",
+        }[method]
+      }
+    >
       {method}
-    </div>
+    </Badge>
   );
 }
 
@@ -21,7 +32,7 @@ export function Endpoint({
   return (
     <div
       className={cn(
-        "relative flex items-center w-full gap-2 p-2 border-t border-x border-border bg-fd-secondary/50 group",
+        "relative flex items-center w-full gap-2 p-2 border-t border-x border-border bg-fd-secondary/50 group rounded-t-lg",
         className,
       )}
     >
