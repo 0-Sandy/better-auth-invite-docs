@@ -28,6 +28,7 @@ type Property = {
   link: string | null;
   params?: Record<string, unknown>;
   returns: string | null;
+  ignore?: boolean;
 };
 
 const placeholderProperty: Property = {
@@ -65,6 +66,8 @@ export const APIMethod = ({
   forceAsBody,
   forceAsParam,
   forceAsQuery,
+  fetchOptionsParams,
+  clientMethod,
 }: {
   /**
    * Endpoint path
@@ -144,10 +147,20 @@ export const APIMethod = ({
    * Force the server auth api to use `path`, rather than auto choosing
    */
   forceAsParam?: boolean;
+  /**
+   * Extra fetch options parameters to show in the example.
+   * @example ["token", "test"]
+   */
+  fetchOptionsParams?: string[] | string;
+  /**
+   * Overrides the client method name.
+   * @example invite[":token"]
+   */
+  clientMethod?: string;
 }) => {
   const { props, functionName, code_prefix, code_suffix } = parseCode(children);
 
-  const authClientMethodPath = pathToDotNotation(path);
+  const authClientMethodPath = clientMethod ?? pathToDotNotation(path);
 
   const clientBody = createClientBody({
     props,
@@ -155,6 +168,7 @@ export const APIMethod = ({
     forceAsBody,
     forceAsQuery,
     forceAsParam,
+    fetchOptionsParams,
   });
 
   const serverBody = createServerBody({
@@ -165,6 +179,7 @@ export const APIMethod = ({
     forceAsQuery,
     forceAsParam,
     forceAsBody,
+    fetchOptionsParams,
   });
 
   const serverCodeBlock = (
@@ -494,6 +509,7 @@ function parseCode(children: JSX.Element) {
   let jsDocLink: string | null = null;
   let jsDocParams: Record<string, unknown> | undefined;
   let jsDocReturns: string | null = null;
+  let jsDocIgnore: boolean = false;
 
   let withinApiMethodType = false;
   let hasAlreadyDefinedApiMethodType = false;
@@ -584,7 +600,11 @@ function parseCode(children: JSX.Element) {
         } else if (trimmed.startsWith("@default")) {
           jsDocDefaultValue = trimmed.replace("@default", "").trim() || null;
           continue;
+        } else if (trimmed === "@ignore") {
+          jsDocIgnore = true;
+          continue;
         }
+
         currentJSDocDescription += `${line} `;
       }
     } else {
@@ -670,6 +690,11 @@ function parseCode(children: JSX.Element) {
         jsDocReturns = null;
       }
 
+      const ignore = jsDocIgnore;
+      if (ignore) {
+        jsDocIgnore = false;
+      }
+
       const property: Property = {
         ...placeholderProperty,
         description,
@@ -689,6 +714,7 @@ function parseCode(children: JSX.Element) {
         link,
         params,
         returns,
+        ignore,
       };
 
       isServerOnly_ = false;
@@ -732,6 +758,14 @@ function buildPropertyLine(
   }
 }
 
+function buildFetchOptionsParams(params?: string | string[]) {
+  if (!params) return "";
+
+  const list = Array.isArray(params) ? params : [params];
+
+  return `{\n        params: { ${list.join(", ")} }\n    }`;
+}
+
 /**
  * Determines if the client request should use query parameters
  *
@@ -756,12 +790,14 @@ function createClientBody({
   forceAsBody,
   forceAsQuery,
   forceAsParam,
+  fetchOptionsParams,
 }: {
   props: Property[];
   method?: string;
   forceAsBody?: boolean;
   forceAsQuery?: boolean;
   forceAsParam?: boolean;
+  fetchOptionsParams?: string[] | string;
 }) {
   const isQueryParam = shouldClientUseQueryParams(
     method,
@@ -777,6 +813,7 @@ function createClientBody({
   for (const prop of props) {
     i++;
     if (prop.isServerOnly) continue;
+    if (prop.ignore) continue;
     if (params === "") params += "{\n";
 
     params += buildPropertyLine(prop, prop.path.length + baseIndentLevel);
@@ -802,7 +839,21 @@ function createClientBody({
     }
   }
 
+  const fetchOptions = buildFetchOptionsParams(fetchOptionsParams);
+
+  if (params !== "" && fetchOptions) {
+    params = params.replace(/\n}$/, `\n    fetchOptions: ${fetchOptions}\n}`);
+  }
+
   return params;
+}
+
+function buildParamsBlock(params?: string | string[]) {
+  if (!params) return "";
+
+  const list = Array.isArray(params) ? params : [params];
+
+  return `\n    params: { ${list.join(", ")} },`;
 }
 
 /**
@@ -831,6 +882,7 @@ function createServerBody({
   forceAsBody,
   forceAsParam,
   forceAsQuery,
+  fetchOptionsParams,
 }: {
   props: Property[];
   requireSession: boolean;
@@ -839,6 +891,7 @@ function createServerBody({
   forceAsQuery: boolean | undefined;
   forceAsParam: boolean | undefined;
   forceAsBody: boolean | undefined;
+  fetchOptionsParams?: string[] | string;
 }) {
   const isQueryParam = shouldServerUseQueryParams(
     method,
@@ -846,7 +899,7 @@ function createServerBody({
     forceAsQuery,
     forceAsParam,
   );
-  const clientOnlyProps = props.filter((x) => !x.isClientOnly);
+  const clientOnlyProps = props.filter((x) => !x.isClientOnly && !x.ignore);
 
   // Build properties content
   let propertiesContent = ``;
@@ -855,6 +908,7 @@ function createServerBody({
   for (const prop of props) {
     i++;
     if (prop.isClientOnly) continue;
+    if (prop.ignore) continue;
     if (propertiesContent === "") propertiesContent += "{\n";
 
     // Check if this is a server-only nested property
@@ -905,12 +959,14 @@ function createServerBody({
       "\n    // This endpoint requires a bearer authentication token.\n    headers: { authorization: 'Bearer <token>' },";
   }
 
+  const extraParamsBlock = buildParamsBlock(fetchOptionsParams);
+
   // Assemble final result
   let result = "";
   if (clientOnlyProps.length > 0) {
     result += "{\n";
     const paramType = isQueryParam ? "query" : forceAsParam ? "params" : "body";
-    result += `    ${paramType}: ${propertiesContent}${fetchOptions}\n}`;
+    result += `    ${paramType}: ${propertiesContent}${extraParamsBlock}${fetchOptions}\n}`;
   } else if (fetchOptions.length) {
     result += `{${fetchOptions}\n}`;
   }

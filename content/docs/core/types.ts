@@ -145,18 +145,6 @@ export type InviteOptions = {
   schema?: InferOptionSchema<InviteSchema> | undefined;
 };
 
-export type InviteType = {
-  token: string;
-  createdByUserId: string;
-  createdAt: Date;
-  expiresAt: Date;
-  maxUses: number;
-  redirectToAfterUpgrade: string;
-  shareInviterName: boolean;
-  email?: string;
-  role: string;
-};
-
 export type TokensType = "token" | "code" | "custom";
 
 export type InferOptionSchema<S> =
