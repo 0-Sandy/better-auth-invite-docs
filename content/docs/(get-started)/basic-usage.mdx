@@ -12,10 +12,34 @@ To invite a user to our application, we need to create an invite. We can create 
 
 Example:
 ```ts
-authClient.invite.create({
+const res = authClient.invite.create({
 	role: "user",
 	email: "test@test.com" // If email is present, the invite is private
 })
+```
+
+The response from `invite.create()` depends on whether the invite is **public** or **private**:
+
+### Public invite
+
+No email is sent, and the API returns the invite **token or URL** (depending on your `senderResponse` config):
+
+```ts
+{
+  status: true,
+  message: "token", // The invite token or URL
+}
+```
+
+### Private invite
+
+The plugin will send an invite email, and the response will be:
+
+```ts
+{
+  status: true,
+  message: "The invitation was sent",
+}
 ```
 
 # Activating an invite
@@ -28,7 +52,7 @@ Activating an invite handles two cases depending on the user's session:
 Example:
 
 ```ts
-const result = await authClient.invite.activate({
+const res = await authClient.invite.activate({
   callbackURL: "/auth/invited", // The user will be redirected here after using the invite
   token: "token123",
 });

@@ -100,7 +100,7 @@ export type InviteOptions = {
     request?: Request,
   ) => Promise<void>;
   /**
-   * Send user role upgrade email
+   * Send user role upgrade email. **(Deprecated, use `sendUserInvitation` instead.)**
    *
    * @deprecated Use `sendUserInvitation` instead.
    */
