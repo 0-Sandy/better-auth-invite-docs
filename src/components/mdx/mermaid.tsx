@@ -2,15 +2,22 @@
 
 import { useTheme } from "next-themes";
 import panzoom, { type PanZoom } from "panzoom";
-import { use, useEffect, useId, useRef, useState } from "react";
+import { Suspense, use, useEffect, useId, useRef, useState } from "react";
 
 export function Mermaid({ chart }: { chart: string }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
 
-  if (!mounted) return null;
-  return <MermaidContent chart={chart} />;
+  if (!mounted) {
+    return <MermaidLoading />;
+  }
+
+  return (
+    <Suspense fallback={<MermaidLoading />}>
+      <MermaidContent chart={chart} />
+    </Suspense>
+  );
 }
 
 const cache = new Map<string, Promise<unknown>>();
@@ -78,6 +85,14 @@ function MermaidContent({ chart }: { chart: string }) {
         style={{ overflow: "hidden", cursor: "default" }}
         dangerouslySetInnerHTML={{ __html: svg }}
       />
+    </div>
+  );
+}
+
+function MermaidLoading() {
+  return (
+    <div className="border rounded-lg my-8 p-6 text-sm text-muted-foreground">
+      Loading...
     </div>
   );
 }

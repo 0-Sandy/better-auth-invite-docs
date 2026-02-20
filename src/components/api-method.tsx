@@ -248,7 +248,7 @@ export const APIMethod = ({
         defaultValue={isServerOnly ? "server" : "client"}
         className="gap-0 w-full"
       >
-        <ApiMethodTabsList className="relative flex justify-start w-full p-0 bg-transparent hover:[&>div>a>button]:opacity-100">
+        <ApiMethodTabsList className="group relative flex justify-start w-full p-0 bg-transparent">
           <ApiMethodTabsTrigger
             value="client"
             className="transition-all duration-150 ease-in-out max-w-25 data-[state=active]:bg-border hover:bg-border/50 bg-border/50 border hover:border-primary/15 cursor-pointer data-[state=active]:border-primary/10 rounded-none"
@@ -297,7 +297,7 @@ export const APIMethod = ({
               href={`#api-method${pathId}`}
               className={cn(
                 buttonVariants({ size: "icon", variant: "ghost" }),
-                "opacity-100 transition-all duration-150 ease-in-out scale-90 md:opacity-0",
+                "opacity-0 transition-all duration-150 ease-in-out scale-80 group-hover:opacity-100",
               )}
             >
               <Link className="size-4" />
