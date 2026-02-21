@@ -4,9 +4,10 @@ import { cn } from "@/lib/cn";
 type GithubUserProps = {
   user: string;
   className?: string;
+  userName?: string;
 };
 
-export function GithubUser({ user, className }: GithubUserProps) {
+export function GithubUser({ user, className, userName }: GithubUserProps) {
   const href = `https://github.com/${user}`;
   const avatar = `https://avatars.githubusercontent.com/${user}`;
 
@@ -15,7 +16,7 @@ export function GithubUser({ user, className }: GithubUserProps) {
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={cn("inline-flex items-center gap-0.5", className)}
+      className={cn("inline-flex items-center gap-0.5 underline", className)}
     >
       <Image
         src={avatar}
@@ -24,7 +25,7 @@ export function GithubUser({ user, className }: GithubUserProps) {
         height={19}
         className="rounded-full not-prose"
       />
-      <span className="self-baseline">@{user}</span>
+      <span className="self-baseline">{userName ? userName : `@${user}`}</span>
     </a>
   );
 }
