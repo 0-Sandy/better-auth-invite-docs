@@ -73,7 +73,7 @@ export function generate({ title, description }: GenerateProps) {
             fontSize: 96,
             fontWeight: 600,
             lineHeight: 0.74,
-            textAlign: "center",
+            textAlign: "left",
           }}
         >
           {title}

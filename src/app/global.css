@@ -13,6 +13,7 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
+  --font-geist: var(--font-geist);
 }
 
 :root {

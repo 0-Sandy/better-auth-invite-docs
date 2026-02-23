@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { GithubButton } from "@/components/github-button";
+import { NpmButton } from "@/components/npm-button";
 
 export default function HomePage() {
   return (
@@ -22,6 +24,32 @@ export default function HomePage() {
         >
           Showcase
         </Link>
+      </div>
+
+      <div className="flex justify-center mt-12">
+        <div className="flex w-fit px-6 gap-9 py-4 rounded-[10px] border border-white/10 dark:bg-white/5 bg-black/5">
+          <code className="md:text-base text-xs font-geist flex items-center">
+            <span className="text-sky-500">git:</span>
+            <span className="text-red-400">(main)</span>
+            <span className="dark:text-white text-black">
+              {" "}
+              &gt; pnpm add better-auth-invite-plugin
+            </span>
+          </code>
+          <div className="flex gap-2 items-center">
+            <NpmButton
+              packageName="better-auth-invite-plugin"
+              label=""
+              noExternalIcon
+            />
+            <GithubButton
+              username="0-Sandy"
+              repository="better-auth-invite-plugin"
+              label=""
+              noExternalIcon
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

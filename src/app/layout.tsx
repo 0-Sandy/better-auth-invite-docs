@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import "./global.css";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import { baseUrl, createMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createMetadata({
@@ -19,13 +19,16 @@ export const metadata: Metadata = createMetadata({
   metadataBase: baseUrl,
 });
 
-const inter = Inter({
-  subsets: ["latin"],
+const geist = localFont({
+  src: "../lib/og/Geist-Regular.ttf",
+  variable: "--font-geist",
+  weight: "400",
+  style: "normal",
 });
 
 export default function Layout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={inter.className} suppressHydrationWarning>
+    <html lang="en" className={geist.variable} suppressHydrationWarning>
       <body className="flex flex-col min-h-screen">
         <RootProvider>
           {children}
