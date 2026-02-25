@@ -100,3 +100,34 @@ The `activateInvite` route uses `optionalSessionMiddleware`, which allows invite
   Before redirecting you to the sign-in/sign-up page, the plugin creates a temporary **invite cookie** in your browser.  
   This cookie stores the invite token securely, so once you complete the login or registration process, a hook automatically reads the cookie and upgrades your role.  
 
+# Rate Limit
+
+You can configure rate limiting for the invite plugin routes using the `rateLimit` option in `betterAuth`.
+
+```ts
+import { betterAuth } from "better-auth";
+
+export const auth = betterAuth({
+    //...other options
+    rateLimit: {
+        window: 60, // time window in seconds
+        max: 100, // max requests in the window
+        customRules: {
+            "/invite/activate": {
+                window: 10,
+                max: 3,
+            },
+            "/invite/create": {
+                window: 10,
+                max: 3,
+            },
+            "/invite/:token": {
+                window: 10,
+                max: 3,
+            },
+        },
+    },
+})
+```
+
+For more details, see [Better Auth Rate Limit Documentation](https://www.better-auth.com/docs/concepts/rate-limit).
