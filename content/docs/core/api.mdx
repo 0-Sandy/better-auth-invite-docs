@@ -1,6 +1,6 @@
 ---
 title: API
-description: Test
+description: Invitation API endpoints and routes.
 icon: Route
 ---
 
@@ -56,8 +56,8 @@ type createInvite = {
 	 */
 	expiresIn?: number
 	/**
-	 * The URL to redirect the user to after upgrading their role
-	 * (if the user is already logged in).
+	 * The URL to redirect the user to after upgrading their role (if the user is already logged in).
+	 * {token} will be replaced with the user's actual token.
    * 
    * @default options.defaultRedirectAfterUpgrade
 	 */
@@ -85,19 +85,30 @@ type createInvite = {
    * @default options.defaultSenderResponseRedirect
 	 */
 	senderResponseRedirect?: "signUp" | "signIn"
+	/**
+	 * If inviteUrlType is set to custom, this will be used
+	 * Use {token} and {callbackUrl}, this will be replaced with their values
+	 */
+	customInviteUrl?: string
+	/**
+	 * The url to send in the email to the user
+	 *
+	 * @default api
+	 */
+	inviteUrlType?: "api" | "custom"
 }
 ```
 </APIMethod>
 
 # Activate Invite
 
-<APIMethod path="/invite/activate" method="POST" requireSession>
+<APIMethod path="/invite/activate" method="POST" optionalSession note="If the user is not logged in, it redirects the user to the callback URL with the token in a cookie.">
 ```ts
 type activateInvite = {
 	/**
 	 * Where to redirect the user after sing in/up
 	 */
-	callbackURL: string
+	callbackURL?: string
   /**
    * The invite token
   */
@@ -114,16 +125,57 @@ type activateInvite = {
   For most apps, you should use [Activate Invite](#activate-invite) instead.
 </Callout>
 
-<APIMethod path="/invite/:token" clientMethod='invite[":token"]' method="GET" requireSession fetchOptionsParams="token">
+<APIMethod path="/invite/:token" clientMethod='invite[":token"]' method="GET" optionalSession fetchOptionsParams="token" note="If the user is not logged in, it redirects the user to the callback URL with the token in a cookie.">
 ```ts
 type activateInviteCallback = {
 	/**
 	 * Where to redirect the user after sing in/up
 	 */
-	callbackURL: string
+	callbackURL?: string
   /**
    * @ignore
    * The invite token
+  */
+  token: string
+}
+```
+</APIMethod>
+
+# Reject Invite
+
+<APIMethod path="/invite/reject" method="POST" requireSession note="Only available for private invites.">
+```ts
+type rejectInvite = {
+  /**
+   * The invite token to reject.
+  */
+  token: string
+}
+```
+</APIMethod>
+
+# Cancel Invite
+
+<APIMethod path="/invite/cancel" method="POST" requireSession note="Only the user that created the invite can cancel it.">
+```ts
+type cancelInvite = {
+  /**
+   * The invite token to cancel.
+  */
+  token: string
+}
+```
+</APIMethod>
+
+# Get Invite
+
+Get basic information about an invitation.
+
+<APIMethod path="/invite/get" method="GET" optionalSession note="For private invites, the requester must match the invite email.">
+```ts
+type getInvite = {
+  /**
+   * The invite token to look up.
   */
   token: string
 }

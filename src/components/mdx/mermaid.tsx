@@ -62,16 +62,16 @@ function MermaidContent({ chart }: { chart: string }) {
     if (svgElement) {
       panRef.current = panzoom(svgElement as unknown as HTMLElement, {
         zoomDoubleClickSpeed: 0,
-        maxZoom: 3,
+        maxZoom: 6,
         minZoom: 0.5,
         beforeWheel: (e) => {
-          e.preventDefault();
-          var shouldIgnore = !e.altKey;
+          const shouldIgnore = !e.altKey;
+          if (!shouldIgnore) e.preventDefault();
           return shouldIgnore;
         },
         beforeMouseDown: (e) => {
-          e.preventDefault();
-          var shouldIgnore = !e.altKey;
+          const shouldIgnore = !e.altKey;
+          if (!shouldIgnore) e.preventDefault();
           return shouldIgnore;
         },
       });

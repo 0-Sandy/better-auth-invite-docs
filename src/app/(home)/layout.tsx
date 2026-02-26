@@ -8,6 +8,7 @@ export default function Layout({ children }: LayoutProps<"/">) {
       links={[
         { text: "Documentation", url: "/docs" },
         { text: "Showcase", url: "/showcase" },
+        { text: "Blog", url: "/blog" },
         {
           type: "menu",
           text: "For LLMs",

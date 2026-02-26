@@ -1,6 +1,12 @@
+import {
+  createFileSystemGeneratorCache,
+  createGenerator,
+} from "fumadocs-typescript";
+import { AutoTypeTable } from "fumadocs-typescript/ui";
 import { Accordion, Accordions } from "fumadocs-ui/components/accordion";
 import { Callout } from "fumadocs-ui/components/callout";
 import { GithubInfo } from "fumadocs-ui/components/github-info";
+import { ImageZoom } from "fumadocs-ui/components/image-zoom";
 import { Step, Steps } from "fumadocs-ui/components/steps";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { TypeTable } from "fumadocs-ui/components/type-table";
@@ -13,23 +19,29 @@ import {
 } from "fumadocs-ui/layouts/docs/page";
 import { createRelativeLink } from "fumadocs-ui/mdx";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { LLMCopyButton, ViewOptions } from "@/components/ai/page-actions";
 import { APIMethod } from "@/components/api-method";
 import DatabaseTable from "@/components/database-table";
 import { Feedback, FeedbackBlock } from "@/components/feedback/client";
 import { GithubButton } from "@/components/github-button";
 import { GithubUser } from "@/components/github-user";
-import { NotFound } from "@/components/not-found";
+import { Mermaid } from "@/components/mdx/mermaid";
 import { NpmButton } from "@/components/npm-button";
 import { onBlockFeedbackAction, onPageFeedbackAction } from "@/lib/github";
 import { createMetadata, getPageImage } from "@/lib/metadata";
 import { source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
+const generator = createGenerator({
+  // set a cache, necessary for serverless platform like Vercel
+  cache: createFileSystemGeneratorCache(".next/fumadocs-typescript"),
+});
+
 export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
   const params = await props.params;
   const page = source.getPage(params.slug);
-  if (!page) return <NotFound />;
+  if (!page) notFound();
 
   if (page.data.type === "openapi") {
     const { APIPage } = await import("@/components/api-page");
@@ -107,6 +119,11 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
             ),
             GithubUser,
             DatabaseTable,
+            img: (props) => <ImageZoom {...props} />,
+            Mermaid,
+            AutoTypeTable: (props) => (
+              <AutoTypeTable {...props} generator={generator} />
+            ),
           })}
         />
       </DocsBody>
@@ -125,13 +142,10 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const params = await props.params;
   const page = source.getPage(params.slug);
-  if (!page)
-    return createMetadata({
-      title: "Not Found",
-    });
+  if (!page) notFound();
 
   const description =
-    page.data.description ?? "The library to invite users to your app";
+    page.data.description ?? "The plugin to invite users to your app";
 
   const image = {
     url: getPageImage(page).url,

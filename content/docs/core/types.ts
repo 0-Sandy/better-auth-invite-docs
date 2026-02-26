@@ -19,16 +19,54 @@ export type InviteOptions = {
           role: string;
         };
         inviterUser: UserWithRole;
-      }) => boolean)
-    | boolean;
+        ctx: GenericEndpointContext;
+      }) => Promise<boolean> | boolean)
+    | boolean
+    | Permissions;
   /**
    * A function that runs before a user accepts an invite
    *
    * @default true
    */
   canAcceptInvite?:
-    | ((data: { invitedUser: UserWithRole; newAccount: boolean }) => boolean)
-    | boolean;
+    | ((data: {
+        invitedUser: UserWithRole;
+        newAccount: boolean;
+      }) => Promise<boolean> | boolean)
+    | boolean
+    | Permissions;
+  /**
+   * A function that runs before a user cancels an invite.
+   *
+   * **Note**: regardless of this option, only the user who created the invite
+   * can cancel it.
+   *
+   * @default true
+   */
+  canCancelInvite?:
+    | ((data: {
+        inviterUser: UserWithRole;
+        invitation: InviteTypeWithId;
+        ctx: GenericEndpointContext;
+      }) => Promise<boolean> | boolean)
+    | boolean
+    | Permissions;
+  /**
+   * A function that runs before a user rejects an invite.
+   *
+   * **Note**: regardless of this option, only the invitee (user whose email
+   * matches the invite email for private invites) can reject it.
+   *
+   * @default true
+   */
+  canRejectInvite?:
+    | ((data: {
+        inviteeUser: UserWithRole;
+        invitation: InviteTypeWithId;
+        ctx: GenericEndpointContext;
+      }) => Promise<boolean> | boolean)
+    | boolean
+    | Permissions;
   /**
    * A function to generate a custom token
    */
@@ -38,6 +76,7 @@ export type InviteOptions = {
    * - Token: () => generateId(24)
    * - Code: () => generateRandomString(6, "0-9", "A-Z")
    * - Custom: generateToken(invitedUser) (needs options.generateToken)
+   *
    * @default "token"
    */
   defaultTokenType?: TokensType;
@@ -56,7 +95,7 @@ export type InviteOptions = {
   /**
    * The default redirect after upgrading role (or logging in with an invite)
    */
-  defaultRedirectAfterUpgrade: string;
+  defaultRedirectAfterUpgrade?: string;
   /**
    * Whether the inviter's name should be shared with the invitee by default.
    *
@@ -67,10 +106,10 @@ export type InviteOptions = {
    */
   defaultShareInviterName?: boolean;
   /**
-   * Max token uses
-   * @default 1
+   * Max times an invite can be used
+   * @default 1 on private invites and infinite on public invites
    */
-  defaultMaxUses: number;
+  defaultMaxUses?: number;
   /**
    * How should the sender receive the token by default.
    * (sender only receives a token if no email is provided)
@@ -86,7 +125,7 @@ export type InviteOptions = {
    */
   defaultSenderResponseRedirect?: "signUp" | "signIn";
   /**
-   * Send user invitation email
+   * Send email to the user with the invite link.
    */
   sendUserInvitation?: (
     data: {
@@ -98,7 +137,7 @@ export type InviteOptions = {
       newAccount: boolean;
     },
     request?: Request,
-  ) => Promise<void>;
+  ) => Promise<void> | void;
   /**
    * Send user role upgrade email. **(Deprecated, use `sendUserInvitation` instead.)**
    *
@@ -112,10 +151,11 @@ export type InviteOptions = {
       token: string;
     },
     request?: Request,
-  ) => Promise<void>;
+  ) => Promise<void> | void;
   /**
    * Number of seconds the invitation token is
    * valid for.
+   *
    * @default 3600 // (1 hour)
    */
   invitationTokenExpiresIn?: number;
@@ -138,11 +178,78 @@ export type InviteOptions = {
       newAccount: boolean;
     },
     request?: Request,
-  ) => Promise<void>;
+  ) => Promise<void> | void;
   /**
    * Custom schema for the invite plugin
    */
-  schema?: InferOptionSchema<InviteSchema> | undefined;
+  schema?: InferOptionSchema<InviteSchema>;
+  /**
+   * Hooks for the invite plugin
+   */
+  inviteHooks?: {
+    /**
+     * A function that runs before a user creates an invite
+     */
+    beforeCreateInvite?: (data: {
+      ctx: GenericEndpointContext;
+    }) => Promise<void> | void;
+    /**
+     * A function that runs after a user creates an invite
+     */
+    afterCreateInvite?: (data: {
+      ctx: GenericEndpointContext;
+      invitation: InviteTypeWithId;
+    }) => Promise<void> | void;
+    /**
+     * A function that runs before a user accepts an invite
+     *
+     * You can return a user object to override the invited user.
+     */
+    beforeAcceptInvite?: (data: {
+      ctx: GenericEndpointContext;
+      invitedUser: UserWithRole;
+    }) =>
+      | Promise<{ user?: UserWithRole }>
+      | Promise<void>
+      | { user?: UserWithRole }
+      | void;
+    /**
+     * A function that runs after a user accepts an invite
+     */
+    afterAcceptInvite?: (data: {
+      ctx: GenericEndpointContext;
+      invitation: InviteTypeWithId;
+      invitedUser: UserWithRole;
+    }) => Promise<void> | void;
+    /**
+     * A function that runs before a user cancels an invite
+     */
+    beforeCancelInvite?: (data: {
+      ctx: GenericEndpointContext;
+      invitation: InviteTypeWithId;
+    }) => Promise<void> | void;
+    /**
+     * A function that runs after a user cancels an invite
+     */
+    afterCancelInvite?: (data: {
+      ctx: GenericEndpointContext;
+      invitation: InviteTypeWithId;
+    }) => Promise<void> | void;
+    /**
+     * A function that runs before a user rejects an invite
+     */
+    beforeRejectInvite?: (data: {
+      ctx: GenericEndpointContext;
+      invitation: InviteTypeWithId;
+    }) => Promise<void> | void;
+    /**
+     * A function that runs after a user rejects an invite
+     */
+    afterRejectInvite?: (data: {
+      ctx: GenericEndpointContext;
+      invitation: InviteTypeWithId;
+    }) => Promise<void> | void;
+  };
 };
 
 export type TokensType = "token" | "code" | "custom";
@@ -172,10 +279,11 @@ export const schema = {
         type: "string",
         references: { model: "user", field: "id", onDelete: "set null" },
       },
-      redirectToAfterUpgrade: { type: "string", required: true },
+      redirectToAfterUpgrade: { type: "string", required: false },
       shareInviterName: { type: "boolean", required: true },
       email: { type: "string", required: false },
       role: { type: "string", required: true },
+      newAccount: { type: "boolean", required: false }, // Only in private invites
     },
   },
   inviteUse: {
@@ -196,3 +304,8 @@ export const schema = {
 };
 
 export type InviteSchema = typeof schema;
+
+export type Permissions = {
+  statement: string;
+  permissions: string[];
+};

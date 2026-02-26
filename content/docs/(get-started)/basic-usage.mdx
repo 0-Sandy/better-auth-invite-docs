@@ -18,6 +18,7 @@ const res = authClient.invite.create({
 })
 ```
 
+If the invite is private, the plugin will send an email to the user with the invite link (see [Activate Invite Callback](/docs/core/api#activate-invite-callback)).
 The response from `invite.create()` depends on whether the invite is **public** or **private**:
 
 ### Public invite
@@ -53,7 +54,7 @@ Example:
 
 ```ts
 const res = await authClient.invite.activate({
-  callbackURL: "/auth/invited", // The user will be redirected here after using the invite
+  callbackURL: "/auth/sign-in-or-sign-up", // The user will be redirected here if they need to sign in or sign up
   token: "token123",
 });
 ```
@@ -67,7 +68,7 @@ The API returns:
   status: true,
   message: "Invite activated successfully",
   action: "SIGN_IN_UP_REQUIRED",
-  redirectTo: "/auth/sign-in-or-sign-up", // This depends on your app's configuration and if the user existed when the invite was created
+  redirectTo: "/auth/sign-in-or-sign-up",
 }
 ```
 

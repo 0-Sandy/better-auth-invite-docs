@@ -58,6 +58,7 @@ export const APIMethod = ({
   children,
   noResult,
   requireSession,
+  optionalSession,
   requireBearerToken,
   note,
   clientOnlyNote,
@@ -79,6 +80,12 @@ export const APIMethod = ({
    * @default false
    */
   requireSession?: boolean;
+  /**
+   *  If enabled, we will add `headers` to the fetch options, indicating the given API method can have auth headers.
+   *
+   * @default false
+   */
+  optionalSession?: boolean;
   /**
    *  If enabled, will add a bearer authorization header to the fetch options
    *
@@ -175,6 +182,7 @@ export const APIMethod = ({
     props,
     method: method ?? "GET",
     requireSession: requireSession ?? false,
+    optionalSession: optionalSession ?? false,
     requireBearerToken: requireBearerToken ?? false,
     forceAsQuery,
     forceAsParam,
@@ -877,6 +885,7 @@ function shouldServerUseQueryParams(
 function createServerBody({
   props,
   requireSession,
+  optionalSession,
   requireBearerToken,
   method,
   forceAsBody,
@@ -886,6 +895,7 @@ function createServerBody({
 }: {
   props: Property[];
   requireSession: boolean;
+  optionalSession: boolean;
   requireBearerToken: boolean;
   method: string;
   forceAsQuery: boolean | undefined;
@@ -954,6 +964,10 @@ function createServerBody({
       "\n    // This endpoint requires session cookies.\n    headers: await headers(),";
   }
 
+  if (optionalSession) {
+    fetchOptions +=
+      "\n    // This endpoint accepts session cookies (optional).\n    headers: await headers(),";
+  }
   if (requireBearerToken) {
     fetchOptions +=
       "\n    // This endpoint requires a bearer authentication token.\n    headers: { authorization: 'Bearer <token>' },";

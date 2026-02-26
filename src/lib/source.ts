@@ -1,6 +1,7 @@
-import { docs } from "fumadocs-mdx:collections/server";
+import { blog as blogPosts, docs } from "fumadocs-mdx:collections/server";
 import { type InferPageType, loader, multiple } from "fumadocs-core/source";
 import { lucideIconsPlugin } from "fumadocs-core/source/lucide-icons";
+import { toFumadocsSource } from "fumadocs-mdx/runtime/server";
 import { openapiPlugin, openapiSource } from "fumadocs-openapi/server";
 import { formatCategoryName, getSection } from "./navigation";
 import { openapi } from "./openapi";
@@ -18,6 +19,10 @@ export const source = loader(
     plugins: [lucideIconsPlugin(), openapiPlugin()],
   },
 );
+
+export const blog = loader(toFumadocsSource(blogPosts, []), {
+  baseUrl: "/blog",
+});
 
 export async function getLLMText(page: InferPageType<typeof source>) {
   if (page.data.type === "openapi") return "";
