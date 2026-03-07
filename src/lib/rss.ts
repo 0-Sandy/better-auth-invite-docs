@@ -28,7 +28,7 @@ export function getRSS() {
         : undefined,
       link: `${baseUrl}${page.url.startsWith("/") ? page.url.slice(1) : page.url}`,
       date: new Date(page.data.lastModified ?? page.data.date),
-      author: [{ name: page.data.author.name }],
+      author: [{ name: page.data.author.name, link: page.data.author.github }],
     });
   }
 
