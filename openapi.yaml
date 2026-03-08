@@ -130,6 +130,165 @@ paths:
               description: Redirect destination
               schema:
                 type: string
+  /invite/cancel:
+    post:
+      tags: [Invites]
+      summary: Cancel an invitation
+      operationId: cancelInvite
+      description: Cancel an invitation. Only the user that created the invite can cancel it.
+      security:
+        - sessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: The invite token to cancel.
+              required: [token]
+      responses:
+        "200":
+          description: Invite cancelled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Invite cancelled successfully
+                required: [status, message]
+
+        "400":
+          description: Invalid token or user does not have permission to cancel this invite
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  errorCode:
+                    type: string
+  /invite/get:
+    get:
+      tags: [Invites]
+      summary: Get invitation information
+      operationId: getInvite
+      description: |
+        Get basic information about an invitation, including inviter details. 
+        For private invites, the requester must match the invite email.
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: token
+          in: query
+          required: true
+          description: The invite token to look up.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Invite found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  inviter:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                      name:
+                        type: string
+                        nullable: true
+                      image:
+                        type: string
+                        nullable: true
+                  invitation:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                        nullable: true
+                      createdAt:
+                        type: string
+                        format: date-time
+                      role:
+                        type: string
+                      newAccount:
+                        type: boolean
+                required: [status, inviter, invitation]
+
+        "400":
+          description: Invalid or non-existent invite token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  errorCode:
+                    type: string
+  /invite/reject:
+    post:
+      tags: [Invites]
+      summary: Reject an invitation
+      operationId: rejectInvite
+      description: |
+        Reject an invitation. Only available for private invites. 
+        Only the invitee (user whose email matches the invite for private invites) can reject it.
+      security:
+        - sessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: The invite token to reject.
+              required: [token]
+      responses:
+        "200":
+          description: Invite rejected successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Invite rejected successfully
+                required: [status, message]
+
+        "400":
+          description: Invalid token or user does not have permission to reject this invite
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  errorCode:
+                    type: string
 
 components:
   securitySchemes:

@@ -6,6 +6,9 @@
   "pages": [
     "(generated)/createInvite",
     "(generated)/activateInvite",
-    "(generated)/activateInviteCallback"
+    "(generated)/activateInviteCallback",
+    "(generated)/rejectInvite",
+    "(generated)/cancelInvite",
+    "(generated)/getInvite"
   ]
 }
