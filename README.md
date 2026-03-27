@@ -1,5 +1,11 @@
 # better-auth-invite-docs
 
+> ⚠️ Starting from version 0.5:
+> - `better-auth-invite` is now called `better-invite`
+> - The docs and the package are in the same repo (now it's a monorepo)
+> 
+> See the new docs [here](https://github.com/better-invite/better-invite/tree/main/docs)
+
 This is a Next.js application generated with
 [Create Fumadocs](https://github.com/fuma-nama/fumadocs).
 
